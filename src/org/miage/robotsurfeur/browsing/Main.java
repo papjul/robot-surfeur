@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package org.miage.robotsurfeur.browsing;
+
 import org.miage.robotsurfeur.toolbox.Tools;
 /**
  *
@@ -35,6 +36,7 @@ public class Main {
     	 * args[2+] = KeyWords
     	 */
     	
+    	
     	if (args.length < 3){
     		System.err.println("Usage: <robot-surfeur> <URL> <time> <keyWords> ");
     		System.err.println("Error: Need three arguments or more ");
@@ -52,16 +54,21 @@ public class Main {
     		
     		if (Tools.isInteger(args[1]) == true){
     			time = Integer.parseInt(args[1]);
-    			if (time < 2 && time > 60){
+    			if (time < 2 || time > 60){
     				System.err.println("Usage: <robot-surfeur> <URL> <time> <keyWords> ");
     				System.err.println("Error: <time> between two and sixty seconds ");
     			}
+    	
     		}
+    		else {
+    			System.err.println("Usage: <robot-surfeur> <URL> <time> <keyWords> ");
+				System.err.println("Error: <time> must be an integer");
+    		}
+    		String keyWords[] = new String[args.length-2];
     		
-    		
+    		for(int i = 2; i < args.length ;++i){
+    			keyWords[i-2]= args[i];
+    		}
     	}
-    	
-    	
-    	
     }
 }
