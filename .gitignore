@@ -1,1 +1,5 @@
 /bin/
+/nbproject/
+/build.xml
+/manifest.mf
+/robot-surfeur.iml
