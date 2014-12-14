@@ -6,3 +6,5 @@
 /.directory
 /.classpath
 /.project
+/build/
+/dist/
