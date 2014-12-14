@@ -18,11 +18,18 @@
 package org.miage.robotsurfeur.toolbox;
 
 /**
+ * Toolbox class with helping functions.
  *
  * @author MIAGE
  */
 public class Tools {
 
+    /**
+     * Check if a given <tt>String</tt> is an Integer
+     *
+     * @param str <tt>String</tt> to check
+     * @return <tt>true</tt> if OK, <tt>false</tt> otherwise
+     */
     public static boolean isInteger(String str) {
         if(str == null) {
             return false;

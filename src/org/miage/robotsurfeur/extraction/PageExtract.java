@@ -32,10 +32,18 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 
+/**
+ * Class to help extracting information from a page.
+ *
+ * @author MIAGE
+ */
 public class PageExtract {
 
     /**
-     * Extract links from a given URL
+     * Extract links from a given URL.
+     *
+     * @param website <tt>String</tt> containing the URL
+     * @return <tt>LinkedList&lt;Link&gt;</tt> a collection of links
      */
     public static LinkedList<Link> getLinks(String website) {
         LinkedList<Link> allLinks = new LinkedList<Link>();
@@ -56,9 +64,15 @@ public class PageExtract {
             while(it.isValid()) {
                 SimpleAttributeSet s = (SimpleAttributeSet) it.getAttributes();
                 String href = (String) s.getAttribute(HTML.Attribute.HREF);
-                if(href != null) {
+                int startOffset = it.getStartOffset();
+                int endOffset = it.getEndOffset();
+                int length = endOffset - startOffset;
+                String content = (String) doc.getText(startOffset, length);
+
+                // Empty links are not visible to human eye, skipping 'em
+                if(href != null && content != null && !content.isEmpty()) {
                     // Add link to our list
-                    Link curLink = new Link(href);
+                    Link curLink = new Link(href, content);
                     try {
                         allLinks.add(curLink);
                     } catch(NullPointerException e) {

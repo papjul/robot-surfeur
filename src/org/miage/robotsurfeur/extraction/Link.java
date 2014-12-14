@@ -18,23 +18,57 @@
 package org.miage.robotsurfeur.extraction;
 
 /**
+ * Class to manage a link.
  *
  * @author MIAGE
  */
 public class Link {
 
+    /**
+     * <tt>Link</tt> reference.
+     */
     String href;
+    /**
+     * <tt>Link</tt> content (between tags).
+     */
+    String content;
 
-    public Link(String h) {
+    /**
+     * Initialize a Link with given parameters.
+     *
+     * @param h <tt>String</tt> representing the reference
+     * @param c <tt>String</tt> representing the content (between tags)
+     */
+    public Link(String h, String c) {
         href = h;
+        content = c;
     }
 
+    /**
+     * Getter for reference.
+     *
+     * @return <tt>String</tt> reference
+     */
     public String getHref() {
         return href;
     }
 
+    /**
+     * Getter for content.
+     *
+     * @return <tt>String</tt> content
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * Returns a human-readable <tt>Link</tt>.
+     *
+     * @return String human-readable <tt>Link</tt>
+     */
     @Override
     public String toString() {
-        return href;
+        return content + ": " + href;
     }
 }

@@ -23,6 +23,7 @@ import org.miage.robotsurfeur.extraction.PageExtract;
 import org.miage.robotsurfeur.toolbox.Tools;
 
 /**
+ * Main class. Launch our program.
  *
  * @author MIAGE
  */
@@ -30,42 +31,44 @@ public class Main {
 
     public static String homeURL;
     public static int time;
-    public static String keyWords[];
+    public static String keywords[];
 
     /**
-     * args[0] = URL, args[1] = Time, args[2+] = KeyWords
+     * Main function. Check args first and then launch the robot.
+     *
+     * @param args [0] = URL, [1] = time, [2+] = keywords
      */
     public static void main(String[] args) {
         /**
          * FIRST: Check args
          */
         if(args.length < 3) {
-            System.err.println("Usage: <robot-surfeur> <URL> <time> <keyWords>");
+            System.err.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
             System.err.println("Error: You must provide at least three arguments");
             System.exit(0);
         } else {
             if(args[0].startsWith("http://") || args[0].startsWith("https://")) {
                 homeURL = args[0];
             } else {
-                System.err.println("Usage: <robot-surfeur> <URL> <time> <keyWords>");
+                System.err.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
                 System.err.println("Error: <URL> = http:// or https://");
             }
 
             if(Tools.isInteger(args[1])) {
                 time = Integer.parseInt(args[1]);
                 if(time < 2 || time > 60) {
-                    System.err.println("Usage: <robot-surfeur> <URL> <time> <keyWords>");
+                    System.err.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
                     System.err.println("Error: <time> between 2 and 60 seconds");
                 }
 
             } else {
-                System.err.println("Usage: <robot-surfeur> <URL> <time> <keyWords>");
+                System.err.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
                 System.err.println("Error: <time> must be an integer");
             }
-            String keyWords[] = new String[args.length - 2];
+            String keywords[] = new String[args.length - 2];
 
             for(int i = 2; i < args.length; ++i) {
-                keyWords[i - 2] = args[i];
+                keywords[i - 2] = args[i];
             }
         }
         /**
@@ -75,14 +78,24 @@ public class Main {
 
         // TODO: Remove when done testing
         for(Link l : curPageLinks) {
-            System.out.println(l.getHref());
+            System.out.println(l);
         }
     }
 
+    /**
+     * Getter for home URL.
+     *
+     * @return <tt>String</tt> URL
+     */
     public String getHomeURL() {
         return homeURL;
     }
 
+    /**
+     * Getter for time between pages.
+     *
+     * @return <tt>int</tt> time
+     */
     public int getTime() {
         return time;
     }
