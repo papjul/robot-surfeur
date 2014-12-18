@@ -16,8 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package org.miage.robotsurfeur.browsing;
+import org.miage.robotsurfeur.decision.Decision;
 
 import java.util.LinkedList;
+
 import org.miage.robotsurfeur.extraction.Link;
 import org.miage.robotsurfeur.extraction.PageExtract;
 import org.miage.robotsurfeur.toolbox.Tools;
@@ -37,8 +39,9 @@ public class Main {
      * Main function. Check args first and then launch the robot.
      *
      * @param args [0] = URL, [1] = time, [2+] = keywords
+     * @throws Exception 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         /**
          * FIRST: Check args
          */
@@ -71,15 +74,18 @@ public class Main {
                 keywords[i - 2] = args[i];
             }
         }
-        /**
-         * SECOND: Get all links
-         */
-        LinkedList<Link> curPageLinks = PageExtract.getLinks(homeURL);
-
-        // TODO: Remove when done testing
-        for(Link l : curPageLinks) {
-            System.out.println(l);
+        
+      /*  Decision.setUp();
+        for (int i=0; i<3; i++){
+        	Decision.randomBrowse();	
         }
+        */
+        // TODO: Remove when done testing
+        LinkedList<Link> curPageLinks = PageExtract.getLinks(homeURL);
+        for(Link l : curPageLinks) {
+        System.out.println(l);
+        }
+        
     }
 
     /**
@@ -87,7 +93,7 @@ public class Main {
      *
      * @return <tt>String</tt> URL
      */
-    public String getHomeURL() {
+    public static String getHomeURL() {
         return homeURL;
     }
 
