@@ -34,6 +34,7 @@ public class Main {
     public static String homeURL;
     public static int time;
     public static String keywords[];
+    public static String exemple[] =  {"les", "Maison","des cacahuettes","alors"};
 
     /**
      * Main function. Check args first and then launch the robot.
@@ -73,18 +74,27 @@ public class Main {
             for(int i = 2; i < args.length; ++i) {
                 keywords[i - 2] = args[i];
             }
+            for(int j=0; j<exemple.length;j++){
+            	System.out.println(exemple[j]);
+            }
+           System.out.println("=========>");
+            System.out.println("__________________________________");
         }
-        
-      /*  Decision.setUp();
+       /*
+       Decision.setUp();
         for (int i=0; i<3; i++){
         	Decision.randomBrowse();	
         }
         */
         // TODO: Remove when done testing
+        /*
         LinkedList<Link> curPageLinks = PageExtract.getLinks(homeURL);
         for(Link l : curPageLinks) {
         System.out.println(l);
         }
+        */
+        Decision.filterKeywords(exemple);
+        
         
     }
 

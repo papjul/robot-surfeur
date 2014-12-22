@@ -11,6 +11,7 @@ import org.miage.robotsurfeur.toolbox.Tools;
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -20,12 +21,16 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.Math;
 
 public class Decision {
 	 private static WebDriver driver;
 	 private static String randomURL;
-	 
+	 private static String keywords[];
 	  
 	 public static void setUp() throws Exception {
 		 driver = new FirefoxDriver();
@@ -69,14 +74,41 @@ public class Decision {
 	       
 	  }
 	  
-       	 	
-		   
-	        
-	       
-	  
-	  
 	  public void tearDown() throws Exception {
 		    driver.quit();
 		    }
-
+	  
+	  // Filter keyword parameters with empty words
+	  
+	  public static void filterKeywords(String keywords[])
+	  {
+		  String fichier ="src/org/miage/robotsurfeur/decision/EmptyWords.txt";
+			
+			//Reading the text file	
+			try{
+				InputStream ips=new FileInputStream(fichier); 
+				InputStreamReader ipsr=new InputStreamReader(ips);
+				BufferedReader br=new BufferedReader(ipsr);
+				String ligne;
+			
+			//Test "stopword" exist an array keyword(parameter)
+				while ((ligne=br.readLine())!=null){
+					for(int i=0; i<keywords.length; i++)
+				    {	
+				    	boolean retval = keywords[i].equals(ligne);
+				    	if(retval==true)
+				    	{	
+				    		keywords = ArrayUtils.remove(keywords,i);
+				    	}
+				    }
+				}
+				for(int j=0; j<keywords.length;j++){
+					System.out.println(keywords[j]);
+				}
+				br.close(); 
+			}		
+			catch (Exception e){
+				System.out.println(e.toString());
+			}
+	  }
 }
