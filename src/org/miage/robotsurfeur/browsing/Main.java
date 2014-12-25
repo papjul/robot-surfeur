@@ -16,7 +16,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package org.miage.robotsurfeur.browsing;
+
 import org.miage.robotsurfeur.decision.Decision;
+import org.miage.robotsurfeur.decision.Synonym;
 
 import java.util.LinkedList;
 
@@ -33,14 +35,15 @@ public class Main {
 
     public static String homeURL;
     public static int time;
-    public static String keywords[];
-    public static String exemple[] =  {"les", "Maison","des cacahuettes","alors"};
+    public static LinkedList<String> keywords;
+    public static LinkedList<String> synonyms;
+    public static String exemple[] = {"les", "Maison", "des cacahuettes", "alors"};
 
     /**
      * Main function. Check args first and then launch the robot.
      *
      * @param args [0] = URL, [1] = time, [2+] = keywords
-     * @throws Exception 
+     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         /**
@@ -69,33 +72,27 @@ public class Main {
                 System.err.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
                 System.err.println("Error: <time> must be an integer");
             }
-            String keywords[] = new String[args.length - 2];
+
+            LinkedList<String> keywords = new LinkedList<String>();
+            LinkedList<String> synonyms = new LinkedList<String>();
 
             for(int i = 2; i < args.length; ++i) {
-                keywords[i - 2] = args[i];
+                keywords.add(args[i]);
+                synonyms.add(Synonym.getMostSimilarFor(args[i]));
             }
-            for(int j=0; j<exemple.length;j++){
-            	System.out.println(exemple[j]);
-            }
-           System.out.println("=========>");
-            System.out.println("__________________________________");
+
+            /*for(int j = 0; j < exemple.length; ++j) {
+             System.out.println(exemple[j]);
+             }*/
+            //System.out.println("=========>");
+            //System.out.println("__________________________________");
+
+            /*Decision.setUp();
+             for(int i = 0; i < 3; ++i) {
+             Decision.randomBrowse();
+             }*/
+            Decision.filterKeywords(exemple);
         }
-       /*
-       Decision.setUp();
-        for (int i=0; i<3; i++){
-        	Decision.randomBrowse();	
-        }
-        */
-        // TODO: Remove when done testing
-        /*
-        LinkedList<Link> curPageLinks = PageExtract.getLinks(homeURL);
-        for(Link l : curPageLinks) {
-        System.out.println(l);
-        }
-        */
-        Decision.filterKeywords(exemple);
-        
-        
     }
 
     /**
