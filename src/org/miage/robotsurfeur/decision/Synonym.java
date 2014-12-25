@@ -22,21 +22,24 @@ import de.linguatools.disco.ReturnDataBN;
 import de.linguatools.disco.ReturnDataCol;
 import java.io.IOException;
 
+import static org.miage.robotsurfeur.toolbox.Constants.DEBUG;
+import static org.miage.robotsurfeur.toolbox.Constants.DISCO_PATH;
+
 /**
  *
  * @author MIAGE
  */
 public class Synonym {
 
-    public static String discoDir = "disco/fr-wikipedia-20110201-lemma/";
-
     public static String getMostSimilarFor(String word) throws IOException {
-        DISCO disco = new DISCO(discoDir, false);
+        DISCO disco = new DISCO(DISCO_PATH, false);
 
         // retrieve the frequency of the input word
         int freq = disco.frequency(word);
-        // and print it to stdout
-        System.out.println("Frequency of " + word + " is " + freq);
+        if(DEBUG) {
+            // and print it to stdout
+            System.out.println("Frequency of " + word + " is " + freq);
+        }
 
         // end if the word wasn't found in the index
         if(freq == 0) {
@@ -45,8 +48,11 @@ public class Synonym {
 
         // retrieve the most similar words for the input word
         ReturnDataBN simResult = disco.similarWords(word);
-        // and print the first one of them to stdout
-        System.out.println("Most similar word: " + simResult.words[1] + " (freq: " + simResult.values[1] + ")");
+        if(DEBUG) {
+            // and print the first one of them to stdout
+            System.out.println("Most similar word: " + simResult.words[1]
+                    + " (freq: " + simResult.values[1] + ")");
+        }
 
         return simResult.words[1];
     }
