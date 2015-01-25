@@ -33,83 +33,91 @@ import org.miage.robotsurfeur.toolbox.Tools;
  */
 public class Main {
 
-    public static String homeURL;
-    public static int time;
-    public static LinkedList<String> keywords;
-    public static LinkedList<String> synonyms;
-    public static String exemple[] = {"les", "Maison", "des cacahuettes", "alors"};
+	public static String homeURL;
+	public static int time;
+	public static LinkedList<String> keywords;
+	public static LinkedList<String> synonyms;
 
-    /**
-     * Main function. Check args first and then launch the robot.
-     *
-     * @param args [0] = URL, [1] = time, [2+] = keywords
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        /**
-         * FIRST: Check args
-         */
-        if(args.length < 3) {
-            System.err.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
-            System.err.println("Error: You must provide at least three arguments");
-            System.exit(0);
-        } else {
-            if(args[0].startsWith("http://") || args[0].startsWith("https://")) {
-                homeURL = args[0];
-            } else {
-                System.err.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
-                System.err.println("Error: <URL> = http:// or https://");
-            }
+	/**
+	 * Main function. Check args first and then launch the robot.
+	 *
+	 * @param args
+	 *            [0] = URL, [1] = time, [2+] = keywords
+	 * @throws Exception
+	 */
+	public static void main(String[] args) throws Exception {
+		/**
+		 * FIRST: Check args
+		 */
+		if (args.length < 3) {
+			System.err
+					.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
+			System.err
+					.println("Error: You must provide at least three arguments");
+			System.exit(0);
+		} else {
+			if (args[0].startsWith("http://") || args[0].startsWith("https://")) {
+				homeURL = args[0];
+			} else {
+				System.err
+						.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
+				System.err.println("Error: <URL> = http:// or https://");
+			}
 
-            if(Tools.isInteger(args[1])) {
-                time = Integer.parseInt(args[1]);
-                if(time < 2 || time > 60) {
-                    System.err.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
-                    System.err.println("Error: <time> between 2 and 60 seconds");
-                }
+			if (Tools.isInteger(args[1])) {
+				time = Integer.parseInt(args[1]);
+				if (time < 2 || time > 60) {
+					System.err
+							.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
+					System.err
+							.println("Error: <time> between 2 and 60 seconds");
+				}
 
-            } else {
-                System.err.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
-                System.err.println("Error: <time> must be an integer");
-            }
+			} else {
+				System.err
+						.println("Usage: <robot-surfeur> <URL> <time> <keywords>");
+				System.err.println("Error: <time> must be an integer");
+			}
 
-            LinkedList<String> keywords = new LinkedList<String>();
-            LinkedList<String> synonyms = new LinkedList<String>();
+			LinkedList<String> keywords = new LinkedList<String>();
+			LinkedList<String> synonyms = new LinkedList<String>();
+			
+			for (int i = 2; i < args.length; ++i) {
+				keywords.add(args[i]);
+				synonyms.add(Synonym.getMostSimilarFor(args[i]));
+			}
+		
+			
+			
+			System.out.println("=========>");
+			System.out.println("__________________________________");
+			System.out.println("After filter keywords, we are :");
+			Decision.filterKeywords(keywords);
+			
+			Decision.setUp();
+			for (int i = 0; i < 3; ++i) {
+				Decision.randomBrowse();
+			}
+			
+			
+		}
+	}
 
-            for(int i = 2; i < args.length; ++i) {
-                keywords.add(args[i]);
-                synonyms.add(Synonym.getMostSimilarFor(args[i]));
-            }
+	/**
+	 * Getter for home URL.
+	 *
+	 * @return <tt>String</tt> URL
+	 */
+	public static String getHomeURL() {
+		return homeURL;
+	}
 
-            /*for(int j = 0; j < exemple.length; ++j) {
-             System.out.println(exemple[j]);
-             }*/
-            //System.out.println("=========>");
-            //System.out.println("__________________________________");
-
-            /*Decision.setUp();
-             for(int i = 0; i < 3; ++i) {
-             Decision.randomBrowse();
-             }*/
-            Decision.filterKeywords(exemple);
-        }
-    }
-
-    /**
-     * Getter for home URL.
-     *
-     * @return <tt>String</tt> URL
-     */
-    public static String getHomeURL() {
-        return homeURL;
-    }
-
-    /**
-     * Getter for time between pages.
-     *
-     * @return <tt>int</tt> time
-     */
-    public int getTime() {
-        return time;
-    }
+	/**
+	 * Getter for time between pages.
+	 *
+	 * @return <tt>int</tt> time
+	 */
+	public int getTime() {
+		return time;
+	}
 }

@@ -2,6 +2,7 @@ package org.miage.robotsurfeur.decision;
 
 import org.miage.robotsurfeur.browsing.Main;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -81,7 +82,7 @@ public class Decision {
     }
 
 	  // Filter keyword parameters with empty words
-    public static void filterKeywords(String keywords[]) {
+    public static void filterKeywords(LinkedList<String> keywords) {
         String fichier = "src/org/miage/robotsurfeur/decision/EmptyWords.txt";
 
         //Reading the text file
@@ -90,18 +91,18 @@ public class Decision {
             InputStreamReader ipsr = new InputStreamReader(ips);
             BufferedReader br = new BufferedReader(ipsr);
             String ligne;
-
             //Test "stopword" exist an array keyword(parameter)
             while((ligne = br.readLine()) != null) {
-                for(int i = 0; i < keywords.length; i++) {
-                    boolean retval = keywords[i].equals(ligne);
-                    if(retval == true) {
-                        keywords = ArrayUtils.remove(keywords, i);
-                    }
+            	Iterator<String> itr = keywords.iterator();
+                while(itr.hasNext()){
+                	if(itr.next().equals(ligne)){
+                		itr.remove();
+                	}
                 }
             }
-            for(int j = 0; j < keywords.length; j++) {
-                System.out.println(keywords[j]);
+            Iterator<String> itr1 = keywords.iterator();
+            while(itr1.hasNext()){
+            		System.out.println(itr1.next());
             }
             br.close();
         } catch(Exception e) {
