@@ -20,6 +20,7 @@ package org.miage.robotsurfeur.browsing;
 import org.miage.robotsurfeur.decision.Decision;
 import org.miage.robotsurfeur.decision.Synonym;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.miage.robotsurfeur.extraction.Link;
@@ -72,14 +73,21 @@ public class Main {
             keywords = new LinkedList<String>();
             synonyms = new LinkedList<String>();
 
-            for(int i = 2; i < args.length; ++i) {
+            for(int i = 2; i < args.length; ++i) 
+            {
                 keywords.add(args[i]);
-                synonyms.add(Synonym.getMostSimilarFor(args[i]));
-            }
-
+            }	 
             // TODO: Must be done before getting similars!
             Decision.filterKeywords(keywords);
+            
+            Iterator<String> itr = keywords.iterator();
+            
+            while(itr.hasNext())
+            {
+                synonyms.add(Synonym.getMostSimilarFor(itr.next()));
+            }
 
+           
             Decision.setUp();
             for(int i = 0; i < 3; ++i) {
                 Decision.randomBrowse();
