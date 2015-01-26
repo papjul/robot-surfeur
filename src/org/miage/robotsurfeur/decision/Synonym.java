@@ -21,9 +21,7 @@ import de.linguatools.disco.DISCO;
 import de.linguatools.disco.ReturnDataBN;
 import de.linguatools.disco.ReturnDataCol;
 import java.io.IOException;
-
-import static org.miage.robotsurfeur.toolbox.Constants.DEBUG;
-import static org.miage.robotsurfeur.toolbox.Constants.DISCO_PATH;
+import org.miage.robotsurfeur.toolbox.Configuration;
 
 /**
  *
@@ -32,11 +30,11 @@ import static org.miage.robotsurfeur.toolbox.Constants.DISCO_PATH;
 public class Synonym {
 
     public static String getMostSimilarFor(String word) throws IOException {
-        DISCO disco = new DISCO(DISCO_PATH, false);
+        DISCO disco = new DISCO(Configuration.getString("DISCO_PATH"), false);
 
         // retrieve the frequency of the input word
         int freq = disco.frequency(word);
-        if(DEBUG) {
+        if(Configuration.getBoolean("DEBUG")) {
             // and print it to stdout
             System.out.println("Frequency of " + word + " is " + freq);
         }
@@ -48,7 +46,7 @@ public class Synonym {
 
         // retrieve the most similar words for the input word
         ReturnDataBN simResult = disco.similarWords(word);
-        if(DEBUG) {
+        if(Configuration.getBoolean("DEBUG")) {
             // and print the first one of them to stdout
             System.out.println("Most similar word: " + simResult.words[1]
                     + " (freq: " + simResult.values[1] + ")");

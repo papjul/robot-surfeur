@@ -17,16 +17,39 @@
  */
 package org.miage.robotsurfeur.toolbox;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 /**
  *
  * @author MIAGE
  */
-public final class Constants {
+public final class Configuration {
 
-    private Constants() {
-        // restrict instantiation
+    public static Properties config = new Properties();
+    private static boolean instancied = false;
+
+    public static boolean isInstancied() {
+        return instancied;
     }
 
-    public static final boolean DEBUG = true;
-    public static final String DISCO_PATH = "disco/fr-wikipedia-20110201-lemma/";
+    public static String getString(String prop) {
+        return config.getProperty(prop);
+    }
+
+    public static Boolean getBoolean(String prop) {
+        return Boolean.parseBoolean(config.getProperty(prop));
+    }
+
+    public static void setUp() {
+        try {
+            FileInputStream in = new FileInputStream("config.properties");
+            config.load(in);
+            in.close();
+        } catch(IOException e) {
+            System.err.println(e);
+        }
+    }
+
 }

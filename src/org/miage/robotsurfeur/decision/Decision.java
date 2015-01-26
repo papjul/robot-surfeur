@@ -40,6 +40,7 @@ public class Decision {
         randomURL = Main.getHomeURL();
     }
 
+    // TODO: Do something if no links found
     public static void randomBrowse() throws Exception {
 
         //Open Home Page
@@ -81,7 +82,7 @@ public class Decision {
         driver.quit();
     }
 
-	  // Filter keyword parameters with empty words
+    // Filter keyword parameters with empty words
     public static void filterKeywords(LinkedList<String> keywords) {
         String fichier = "src/org/miage/robotsurfeur/decision/EmptyWords.txt";
 
@@ -93,16 +94,16 @@ public class Decision {
             String ligne;
             //Test "stopword" exist an array keyword(parameter)
             while((ligne = br.readLine()) != null) {
-            	Iterator<String> itr = keywords.iterator();
-                while(itr.hasNext()){
-                	if(itr.next().equals(ligne)){
-                		itr.remove();
-                	}
+                Iterator<String> itr = keywords.iterator();
+                while(itr.hasNext()) {
+                    if(itr.next().equals(ligne)) {
+                        itr.remove();
+                    }
                 }
             }
             Iterator<String> itr1 = keywords.iterator();
-            while(itr1.hasNext()){
-            		System.out.println(itr1.next());
+            while(itr1.hasNext()) {
+                System.out.println(itr1.next());
             }
             br.close();
         } catch(Exception e) {
