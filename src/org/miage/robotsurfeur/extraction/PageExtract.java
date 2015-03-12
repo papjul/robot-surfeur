@@ -20,71 +20,90 @@ package org.miage.robotsurfeur.extraction;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.EditorKit;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 /**
  * Class to help extracting information from a page.
  *
  * @author MIAGE
  */
-public class PageExtract {
-
-    /**
+public class PageExtract{
+	
+	/**
      * Extract links from a given URL.
      *
-     * @param website <tt>String</tt> containing the URL
+     * @param wd <tt>WebDriver</tt> 
      * @return <tt>LinkedList&lt;Link&gt;</tt> a collection of links
      */
-    public static LinkedList<Link> getLinks(String website) {
-        LinkedList<Link> allLinks = new LinkedList<Link>();
-        try {
-            // Loading page
-            URL url = new URL(website);
-            URLConnection uconnection = url.openConnection();
-            Reader rd = new InputStreamReader(uconnection.getInputStream());
+	
+	
+	
+	public static LinkedList<Link> getLinks(WebDriver wd){
+		
+		System.out.println("Extract....");
+		List<WebElement> listLink =  wd.findElements(By.xpath("//a[@href]"));
+		LinkedList<Link> allLinks = new LinkedList<Link>();
+				
+		
+		String link = new String();
+		String text = new String();
+				
+		for(int i = 0; i < listLink.size(); i++){
+			link = listLink.get(i).getAttribute("href");
+			text = listLink.get(i).getText();
+				
+				//add Link to the LinkedList
+				allLinks.add(new Link (link,text));
+			
+		}
+		
+		//Delete doubloon
+		Set<Link> mySet = new HashSet<Link>(allLinks);
+		 
+	    allLinks = new LinkedList<Link>(mySet);
+	    
+	    for(int j = 0 ; j < allLinks.size()-1 ; j++){
+			System.out.println("Lien : "+j+ " : "+ allLinks.get(j));
+		}
+	    
+		System.out.println("End of extract");
+		
+		return allLinks;
+	}
 
-            // Reading HTML document
-            EditorKit kit = new HTMLEditorKit();
-            HTMLDocument doc = (HTMLDocument) kit.createDefaultDocument();
-            doc.putProperty("IgnoreCharsetDirective", true);
-            kit.read(rd, doc, 0);
+	//Check if the URL is valid 
+	public static boolean correctLink(String website){
+		try{
+			URL url = new URL(website);
+			URLConnection uconnection = (URLConnection) url.openConnection();
+			Map<String, List<String>> map = uconnection.getHeaderFields();
 
-            // Browse link tags
-            HTMLDocument.Iterator it = doc.getIterator(HTML.Tag.A);
-            while(it.isValid()) {
-                SimpleAttributeSet s = (SimpleAttributeSet) it.getAttributes();
-                String href = (String) s.getAttribute(HTML.Attribute.HREF);
-                int startOffset = it.getStartOffset();
-                int endOffset = it.getEndOffset();
-                int length = endOffset - startOffset;
-                String content = (String) doc.getText(startOffset, length);
+			String serv = uconnection.getHeaderField("Server");
 
-                // Empty links are not visible to human eye, skipping 'em
-                if(href != null && content != null && !content.isEmpty()) {
-                    // Add link to our list
-                    Link curLink = new Link(href, content);
-                    try {
-                        allLinks.add(curLink);
-                    } catch(NullPointerException e) {
-                        System.err.println("Error while adding link to list:" + curLink);
-                    }
-                }
-                it.next();
-            }
-        } catch(BadLocationException | IOException e) {
-            Logger.getLogger(PageExtract.class.getName()).log(Level.SEVERE, null, e);
-        }
+			if (serv == null) return false;	
+			else return true;
+			
 
-        return allLinks;
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
 }
