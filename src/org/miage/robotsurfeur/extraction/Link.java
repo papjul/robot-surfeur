@@ -22,7 +22,7 @@ package org.miage.robotsurfeur.extraction;
  *
  * @author MIAGE
  */
-public class Link {
+public class Link implements Comparable<Link> {
 
     @Override
     public int hashCode() {
@@ -126,4 +126,19 @@ public class Link {
     public String toString() {
         return content + ": " + href;
     }
+
+	@Override
+	public int compareTo(Link link2) {
+		// TODO Auto-generated method stub
+		 if (this.getScore() > link2.getScore()) 
+		 {
+			 return -1;
+		 } 
+	     else if(this.getScore() == link2.getScore()) 
+	     {
+	    	 return 0;
+	     } 
+	     
+	     else return 1; 
+	}
 }
