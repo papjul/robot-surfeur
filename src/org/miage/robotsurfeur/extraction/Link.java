@@ -25,37 +25,44 @@ package org.miage.robotsurfeur.extraction;
 public class Link {
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((content == null) ? 0 : content.hashCode());
-		result = prime * result + ((href == null) ? 0 : href.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((content == null) ? 0 : content.hashCode());
+        result = prime * result + ((href == null) ? 0 : href.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Link other = (Link) obj;
-		if (content == null) {
-			if (other.content != null)
-				return false;
-		} else if (!content.equals(other.content))
-			return false;
-		if (href == null) {
-			if (other.href != null)
-				return false;
-		} else if (!href.equals(other.href))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Link other = (Link) obj;
+        if (content == null) {
+            if (other.content != null) {
+                return false;
+            }
+        } else if (!content.equals(other.content)) {
+            return false;
+        }
+        if (href == null) {
+            if (other.href != null) {
+                return false;
+            }
+        } else if (!href.equals(other.href)) {
+            return false;
+        }
+        return true;
+    }
 
-	/**
+    /**
      * <tt>Link</tt> reference.
      */
     String href;
@@ -63,8 +70,12 @@ public class Link {
      * <tt>Link</tt> content (between tags).
      */
     String content;
-    
-    int [] Counter = new int[2];
+
+    /**
+     * Score
+     */
+    int score;
+
     /**
      * Initialize a Link with given parameters.
      *
@@ -73,14 +84,22 @@ public class Link {
      */
     public Link(String h, String c) {
         href = h;
-        content = c; 
+        content = c;
     }
 
-    public int[] getCounter() {
-		return Counter;
-	}
+    public int getScore() {
+        return score;
+    }
 
-	/**
+    public void increaseScore(int increment) {
+        score += increment;
+    }
+
+    public void resetScore() {
+        score = 0;
+    }
+
+    /**
      * Getter for reference.
      *
      * @return <tt>String</tt> reference

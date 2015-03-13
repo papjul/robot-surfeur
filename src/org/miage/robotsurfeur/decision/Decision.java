@@ -34,99 +34,73 @@ import java.lang.Math;
 
 public class Decision {
 
-    private static WebDriver driver;
+    public static WebDriver driver;
     private static String randomURL;
-    private static String keywords[];
     private static String currentUrl;
-	static int [] count = new int[2];
-
-
-    
 
     public static void setUp() throws Exception {
-    	
-    	driver = new FirefoxDriver();
+        driver = new FirefoxDriver();
         randomURL = Main.getHomeURL();
-        
-        if(PageExtract.correctLink(randomURL)){
-			currentUrl = randomURL;
-			driver.get(currentUrl);
+
+        if (PageExtract.correctLink(randomURL)) {
+            currentUrl = randomURL;
+            driver.get(currentUrl);
+        } else {
+            System.err.println("Bad URL");
+            driver.close();
         }
-        else{
-        	System.err.println("Bad URL");
-        	driver.close();
-        }
-        
     }
 
-    
     public static void randomBrowse() throws Exception {
-
         //Open Home Page
         driver.get(randomURL);
 
         //Extract links from a given URL
         LinkedList<Link> curPageLinks = PageExtract.getLinks(driver);
         int countURL = curPageLinks.size();
-        
-        for (int i = 0 ; i < countURL ; i++){
-        	wordInTheLink(curPageLinks.get(i).getHref(), countURL, curPageLinks.get(i));
+
+        for (int i = 0; i < countURL; i++) {
+            computeLinkScore(curPageLinks.get(i));
         }
         //Count number of links
-        System.err.println("Taille : " + countURL);
+//        System.err.println("Taille : " + countURL);
 
         //Generate a random number between 0 and the number of links
         int rand = (int) (Math.random() * countURL);
-        System.err.println("Rand : " + rand);
+  //      System.err.println("Rand : " + rand);
 
         //Get the URL from the chosen one Link
-        Link test = curPageLinks.get(rand);
-        String link = test.getHref();
-        System.err.println("URL : " + link);
-
-        rand = (int) (Math.random() * countURL);
-        System.err.println("Rand : " + rand);
-        
-        
-        test = curPageLinks.get(rand);
-        System.err.println("test : " + test);
-        link = test.getHref();
-        System.err.println("URL : " + link);
-        
-        
-
-        randomURL = link;
+//        Link test = curPageLinks.get(rand);
+//        String link = test.getHref();
+        //    System.err.println("URL : " + link);
+//        System.err.println("Rand : " + rand);
+        //       test = curPageLinks.get(rand);
+        //      System.err.println("test : " + test);
+        //       link = test.getHref();
+        //      System.err.println("URL : " + link);
+        randomURL = curPageLinks.get(rand).getHref();
         System.err.println("RandomURL : " + randomURL);
+    }
 
+    public static void computeLinkScore(Link link) {
+        StringTokenizer st = new StringTokenizer(link.getContent(), "/-=;&%.: ");
+
+        // Init of score
+        link.resetScore();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken().toLowerCase();
+            if (Main.keywords.contains(token)) {
+                System.out.println("Keyword " + token + " found!");
+                link.increaseScore(2);
+            }
+            if (Main.synonyms.contains(token)) {
+                System.out.println("Synonym " + token + " found");
+                link.increaseScore(1);
+            }
+        }
+
+        System.out.println("Score of " + link.getHref() + " = " + link.getScore());
     }
-    
-    public static void wordInTheLink(String string, int counter, Link choice){
-    	
-    	StringTokenizer st = new StringTokenizer(string,"/-=;&%.:");
-    	String str = st.nextToken();
-    	String[] tab = new String[st.countTokens()];
-    	int i = 0;
-    	while (st.hasMoreTokens()) {
-	         tab[i]=st.nextToken();
-	         i++;
-	     }
-    	for (int j=0; j<tab.length; j++){
-    		System.out.println(tab[j]+" ");
-    	}
-    	
-    	for(int j = 0 ; j < tab.length ; j++){
-    		for(int k = 0 ; k < Main.keywords.size() ; k++){
-    			if(tab[j].contains(Main.keywords.get(k))){
-    				 
-    			}
-    		}
-    		
-    	}
-    	for (int l = 0 ; l < counter ; l++){
-    		System.out.println("link:"+l+ "keywords = "+count[0]+" Synonyms = "+count[1]);
-    	}
-    }
-    
 
     public void tearDown() throws Exception {
         driver.quit();
@@ -143,20 +117,20 @@ public class Decision {
             BufferedReader br = new BufferedReader(ipsr);
             String ligne;
             //Test "stopword" exist an array keyword(parameter)
-            while((ligne = br.readLine()) != null) {
+            while ((ligne = br.readLine()) != null) {
                 Iterator<String> itr = keywords.iterator();
-                while(itr.hasNext()) {
-                    if(itr.next().equals(ligne)) {
+                while (itr.hasNext()) {
+                    if (itr.next().equals(ligne)) {
                         itr.remove();
                     }
                 }
             }
             Iterator<String> itr1 = keywords.iterator();
-            while(itr1.hasNext()) {
+            while (itr1.hasNext()) {
                 System.out.println(itr1.next());
             }
             br.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }

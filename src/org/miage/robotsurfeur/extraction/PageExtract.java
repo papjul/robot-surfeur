@@ -42,68 +42,60 @@ import org.openqa.selenium.firefox.FirefoxDriver;
  *
  * @author MIAGE
  */
-public class PageExtract{
-	
-	/**
+public class PageExtract {
+
+    /**
      * Extract links from a given URL.
      *
-     * @param wd <tt>WebDriver</tt> 
+     * @param wd <tt>WebDriver</tt>
      * @return <tt>LinkedList&lt;Link&gt;</tt> a collection of links
      */
-	
-	
-	
-	public static LinkedList<Link> getLinks(WebDriver wd){
-		
-		System.out.println("Extract....");
-		List<WebElement> listLink =  wd.findElements(By.xpath("//a[@href]"));
-		LinkedList<Link> allLinks = new LinkedList<Link>();
-				
-		
-		String link = new String();
-		String text = new String();
-				
-		for(int i = 0; i < listLink.size(); i++){
-			link = listLink.get(i).getAttribute("href");
-			text = listLink.get(i).getText();
-				
-				//add Link to the LinkedList
-				allLinks.add(new Link (link,text));
-			
-		}
-		
-		//Delete doubloon
-		Set<Link> mySet = new HashSet<Link>(allLinks);
-		 
-	    allLinks = new LinkedList<Link>(mySet);
-	    
-	    for(int j = 0 ; j < allLinks.size()-1 ; j++){
-			System.out.println("Lien : "+j+ " : "+ allLinks.get(j));
-		}
-	    
-		System.out.println("End of extract");
-		
-		return allLinks;
-	}
+    public static LinkedList<Link> getLinks(WebDriver wd) {
 
-	//Check if the URL is valid 
-	public static boolean correctLink(String website){
-		try{
-			URL url = new URL(website);
-			URLConnection uconnection = (URLConnection) url.openConnection();
-			Map<String, List<String>> map = uconnection.getHeaderFields();
+//        System.out.println("Extract....");
+        List<WebElement> listLink = wd.findElements(By.xpath("//a[@href]"));
+        LinkedList<Link> allLinks = new LinkedList<>();
 
-			String serv = uconnection.getHeaderField("Server");
+        for (int i = 0; i < listLink.size(); i++) {
+            String link = listLink.get(i).getAttribute("href");
+            String text = listLink.get(i).getText();
 
-			if (serv == null) return false;	
-			else return true;
-			
+            //add Link to the LinkedList
+            allLinks.add(new Link(link, text));
+        }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        //Delete doubloon
+//        Set<Link> mySet = new HashSet<Link>(allLinks);
+//        allLinks = new LinkedList<Link>(mySet);
 
-		return false;
-	}
+        /*       for (int j = 0; j < allLinks.size() - 1; j++) {
+         System.out.println("Lien : " + j + " : " + allLinks.get(j));
+         }
+         */
+        //      System.out.println("End of extract");
+        return allLinks;
+    }
+
+    //Check if the URL is valid
+    public static boolean correctLink(String website) {
+        try {
+            URL url = new URL(website);
+            URLConnection uconnection = (URLConnection) url.openConnection();
+            Map<String, List<String>> map = uconnection.getHeaderFields();
+
+            String serv = uconnection.getHeaderField("Server");
+
+            if (serv == null) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 
 }
