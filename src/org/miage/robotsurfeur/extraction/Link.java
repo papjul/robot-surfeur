@@ -127,18 +127,19 @@ public class Link implements Comparable<Link> {
         return content + ": " + href;
     }
 
-	@Override
-	public int compareTo(Link link2) {
-		// TODO Auto-generated method stub
-		 if (this.getScore() > link2.getScore()) 
-		 {
-			 return -1;
-		 } 
-	     else if(this.getScore() == link2.getScore()) 
-	     {
-	    	 return 0;
-	     } 
-	     
-	     else return 1; 
-	}
+    @Override
+    public int compareTo(Link link2) {
+        final int BEFORE = -1;
+        final int EQUAL = 0;
+        final int AFTER = 1;
+
+        if (this.getScore() < link2.getScore()) {
+            return BEFORE;
+        }
+        if (this.getScore() > link2.getScore()) {
+            return AFTER;
+        }
+
+        return EQUAL;
+    }
 }

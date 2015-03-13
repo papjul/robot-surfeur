@@ -4,86 +4,74 @@ import org.miage.robotsurfeur.browsing.Main;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Random;
 import java.util.StringTokenizer;
 
 import org.miage.robotsurfeur.extraction.Link;
 import org.miage.robotsurfeur.extraction.PageExtract;
-import org.miage.robotsurfeur.toolbox.Tools;
-
-import java.util.regex.Pattern;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.junit.*;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.Math;
+import java.util.Collections;
+import org.miage.robotsurfeur.toolbox.Configuration;
 
 public class Decision {
 
     public static WebDriver driver;
-    private static String randomURL;
-    private static String currentUrl;
+    private static Link currentURL;
 
     public static void setUp() throws Exception {
         driver = new FirefoxDriver();
-        randomURL = Main.getHomeURL();
 
-        if (PageExtract.correctLink(randomURL)) {
-            currentUrl = randomURL;
-            driver.get(currentUrl);
+        if (PageExtract.correctLink(Main.getHomeURL())) {
+            driver.get(Main.getHomeURL());
         } else {
-            System.err.println("Bad URL");
+            System.err.println("Bad home URL argument");
             driver.close();
+            System.exit(0);
         }
     }
 
-    public static void randomBrowse() throws Exception {
-        //Open Home Page
-        driver.get(randomURL);
-
+    public static void browse() throws Exception {
         //Extract links from a given URL
         LinkedList<Link> curPageLinks = PageExtract.getLinks(driver);
-        int countURL = curPageLinks.size();
 
-        for (int i = 0; i < countURL; i++) {
-            computeLinkScore(curPageLinks.get(i));
+        // TODO: If no links found, do something else (go backwards with a different link for example)
+        if (curPageLinks.size() == 0) {
+            System.exit(0);
         }
-        //Count number of links
-//        System.err.println("Taille : " + countURL);
 
-        //Generate a random number between 0 and the number of links
-        int rand = (int) (Math.random() * countURL);
-  //      System.err.println("Rand : " + rand);
+        for (Link curPageLink : curPageLinks) {
+            computeLinkScore(curPageLink);
+        }
 
-        //Get the URL from the chosen one Link
-//        Link test = curPageLinks.get(rand);
-//        String link = test.getHref();
-        //    System.err.println("URL : " + link);
-//        System.err.println("Rand : " + rand);
-        //       test = curPageLinks.get(rand);
-        //      System.err.println("test : " + test);
-        //       link = test.getHref();
-        //      System.err.println("URL : " + link);
-        randomURL = curPageLinks.get(rand).getHref();
-        System.err.println("RandomURL : " + randomURL);
+        int nb = 0;
+        switch (Configuration.getString("DECISION_MODE")) {
+            case "random":
+                // Generate a random number between 0 and the number of links
+                nb = (int) (Math.random() * curPageLinks.size());
+                break;
+            case "intelligent":
+                Collections.sort(curPageLinks, Collections.reverseOrder());
+                // Highest score in the list
+                nb = 0;
+                break;
+            default:
+                System.err.println("Bad value for DECISION_MODE config in config.properties");
+                System.exit(0);
+        }
+        currentURL = curPageLinks.get(nb);
+        System.out.println(currentURL + " " + currentURL.getScore());
+
+        driver.get(currentURL.getHref());
     }
 
     public static void computeLinkScore(Link link) {
-        StringTokenizer st = new StringTokenizer(link.getContent(), "/-=;&%.: ");
+        StringTokenizer st = new StringTokenizer(link.getContent() + " " + link.getHref(), "/-=;?&%.+: ");
 
         // Init of score
         link.resetScore();
@@ -91,15 +79,15 @@ public class Decision {
             String token = st.nextToken().toLowerCase();
             if (Main.keywords.contains(token)) {
                 System.out.println("Keyword " + token + " found!");
-                link.increaseScore(2);
+                link.increaseScore(Configuration.getInt("SCORE_KEYWORD"));
             }
             if (Main.synonyms.contains(token)) {
                 System.out.println("Synonym " + token + " found");
-                link.increaseScore(1);
+                link.increaseScore(Configuration.getInt("SCORE_SYNONYM"));
             }
         }
 
-        System.out.println("Score of " + link.getHref() + " = " + link.getScore());
+        //System.out.println("Score of " + link.getHref() + " = " + link.getScore());
     }
 
     public void tearDown() throws Exception {
@@ -108,7 +96,7 @@ public class Decision {
 
     // Filter keyword parameters with empty words
     public static void filterKeywords(LinkedList<String> keywords) {
-        String fichier = "src/org/miage/robotsurfeur/decision/EmptyWords.txt";
+        String fichier = "EmptyWords.txt";
 
         //Reading the text file
         try {

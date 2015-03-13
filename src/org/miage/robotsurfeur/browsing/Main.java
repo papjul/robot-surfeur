@@ -23,8 +23,6 @@ import org.miage.robotsurfeur.decision.Synonym;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.miage.robotsurfeur.extraction.Link;
-import org.miage.robotsurfeur.extraction.PageExtract;
 import org.miage.robotsurfeur.toolbox.Configuration;
 import org.miage.robotsurfeur.toolbox.Tools;
 
@@ -51,18 +49,18 @@ public class Main {
         /**
          * FIRST: Check args
          */
-        if(args.length < 3) {
+        if (args.length < 3) {
             throw new IllegalArgumentException("Usage: <robot-surfeur> <URL> <time> <keywords>\nError: You must provide at least three arguments");
         } else {
-            if(args[0].startsWith("http://") || args[0].startsWith("https://")) {
+            if (args[0].startsWith("http://") || args[0].startsWith("https://")) {
                 homeURL = args[0];
             } else {
                 throw new IllegalArgumentException("Usage: <robot-surfeur> <URL> <time> <keywords>\nError: <URL> = http:// or https://");
             }
 
-            if(Tools.isInteger(args[1])) {
+            if (Tools.isInteger(args[1])) {
                 time = Integer.parseInt(args[1]);
-                if(time < 2 || time > 60) {
+                if (time < 2 || time > 60) {
                     throw new IllegalArgumentException("Usage: <robot-surfeur> <URL> <time> <keywords>\nError: <time> between 2 and 60 seconds");
                 }
 
@@ -70,27 +68,24 @@ public class Main {
                 throw new IllegalArgumentException("Usage: <robot-surfeur> <URL> <time> <keywords>\nError: <time> must be an integer");
             }
 
-            keywords = new LinkedList<String>();
-            synonyms = new LinkedList<String>();
+            keywords = new LinkedList<>();
+            synonyms = new LinkedList<>();
 
-            for(int i = 2; i < args.length; ++i) 
-            {
+            for (int i = 2; i < args.length; ++i) {
                 keywords.add(args[i]);
-            }	 
+            }
             // TODO: Must be done before getting similars!
             Decision.filterKeywords(keywords);
-            
+
             Iterator<String> itr = keywords.iterator();
-            
-            while(itr.hasNext())
-            {
+
+            while (itr.hasNext()) {
                 synonyms.add(Synonym.getMostSimilarFor(itr.next()));
             }
 
-           
             Decision.setUp();
-            for(int i = 0; i < 3; ++i) {
-                Decision.randomBrowse();
+            for (int i = 0; i < Configuration.getInt("NB_CLICKS"); ++i) {
+                Decision.browse();
             }
 
         }

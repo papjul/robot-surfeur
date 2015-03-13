@@ -19,7 +19,6 @@ package org.miage.robotsurfeur.decision;
 
 import de.linguatools.disco.DISCO;
 import de.linguatools.disco.ReturnDataBN;
-import de.linguatools.disco.ReturnDataCol;
 import java.io.IOException;
 import org.miage.robotsurfeur.toolbox.Configuration;
 
@@ -34,19 +33,19 @@ public class Synonym {
 
         // retrieve the frequency of the input word
         int freq = disco.frequency(word);
-        if(Configuration.getBoolean("DEBUG")) {
+        if (Configuration.getBoolean("DEBUG")) {
             // and print it to stdout
             System.out.println("Frequency of " + word + " is " + freq);
         }
 
         // end if the word wasn't found in the index
-        if(freq == 0) {
+        if (freq == 0) {
             return null;
         }
 
         // retrieve the most similar words for the input word
         ReturnDataBN simResult = disco.similarWords(word);
-        if(Configuration.getBoolean("DEBUG")) {
+        if (Configuration.getBoolean("DEBUG")) {
             // and print the first one of them to stdout
             System.out.println("Most similar word: " + simResult.words[1]
                     + " (freq: " + simResult.values[1] + ")");

@@ -28,7 +28,7 @@ import java.util.Properties;
 public final class Configuration {
 
     public static Properties config = new Properties();
-    private static boolean instancied = false;
+    private static final boolean instancied = false;
 
     public static boolean isInstancied() {
         return instancied;
@@ -38,16 +38,19 @@ public final class Configuration {
         return config.getProperty(prop);
     }
 
+    public static int getInt(String prop) {
+        return Integer.parseInt(config.getProperty(prop));
+    }
+
     public static Boolean getBoolean(String prop) {
         return Boolean.parseBoolean(config.getProperty(prop));
     }
 
     public static void setUp() {
-        try {
-            FileInputStream in = new FileInputStream("config.properties");
+        try (FileInputStream in = new FileInputStream("config.properties")) {
             config.load(in);
             in.close();
-        } catch(IOException e) {
+        } catch (IOException e) {
             System.err.println(e);
         }
     }

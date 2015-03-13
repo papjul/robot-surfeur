@@ -17,25 +17,15 @@
  */
 package org.miage.robotsurfeur.extraction;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 /**
  * Class to help extracting information from a page.
@@ -56,23 +46,12 @@ public class PageExtract {
         List<WebElement> listLink = wd.findElements(By.xpath("//a[@href]"));
         LinkedList<Link> allLinks = new LinkedList<>();
 
-        for (int i = 0; i < listLink.size(); i++) {
-            String link = listLink.get(i).getAttribute("href");
-            String text = listLink.get(i).getText();
-
-            //add Link to the LinkedList
+        for (WebElement anchor : listLink) {
+            String link = anchor.getAttribute("href");
+            String text = anchor.getText();
             allLinks.add(new Link(link, text));
         }
 
-        //Delete doubloon
-//        Set<Link> mySet = new HashSet<Link>(allLinks);
-//        allLinks = new LinkedList<Link>(mySet);
-
-        /*       for (int j = 0; j < allLinks.size() - 1; j++) {
-         System.out.println("Lien : " + j + " : " + allLinks.get(j));
-         }
-         */
-        //      System.out.println("End of extract");
         return allLinks;
     }
 
@@ -85,12 +64,7 @@ public class PageExtract {
 
             String serv = uconnection.getHeaderField("Server");
 
-            if (serv == null) {
-                return false;
-            } else {
-                return true;
-            }
-
+            return serv != null;
         } catch (Exception e) {
             e.printStackTrace();
         }
