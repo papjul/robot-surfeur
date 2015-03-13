@@ -23,11 +23,14 @@ public class Decision {
 
     public static WebDriver driver;
     private static Link currentURL;
+    private static LinkedList<String> linkHistory;
 
     public static void setUp() throws Exception {
         driver = new FirefoxDriver();
 
         if (PageExtract.correctLink(Main.getHomeURL())) {
+            linkHistory = new LinkedList<>();
+            linkHistory.add(Main.getHomeURL());
             driver.get(Main.getHomeURL());
         } else {
             System.err.println("Bad home URL argument");
@@ -36,38 +39,58 @@ public class Decision {
         }
     }
 
+    public static String getPreviousLink() {
+        return linkHistory.get(linkHistory.size() - 1);
+    }
+
     public static void browse() throws Exception {
-        //Extract links from a given URL
+        // Extract links from a given URL
         LinkedList<Link> curPageLinks = PageExtract.getLinks(driver);
 
-        // TODO: If no links found, do something else (go backwards with a different link for example)
+        // If no links found, we go backwards
         if (curPageLinks.size() == 0) {
-            System.exit(0);
-        }
+            driver.get(getPreviousLink());
+        } else {
+            for (Link curPageLink : curPageLinks) {
+                computeLinkScore(curPageLink);
+            }
 
-        for (Link curPageLink : curPageLinks) {
-            computeLinkScore(curPageLink);
-        }
+            int nb = 0;
+            switch (Configuration.getString("DECISION_MODE")) {
+                case "random":
+                    // Generate a random number between 0 and the number of links
+                    nb = (int) (Math.random() * curPageLinks.size());
 
-        int nb = 0;
-        switch (Configuration.getString("DECISION_MODE")) {
-            case "random":
-                // Generate a random number between 0 and the number of links
-                nb = (int) (Math.random() * curPageLinks.size());
-                break;
-            case "intelligent":
-                Collections.sort(curPageLinks, Collections.reverseOrder());
-                // Highest score in the list
-                nb = 0;
-                break;
-            default:
-                System.err.println("Bad value for DECISION_MODE config in config.properties");
-                System.exit(0);
-        }
-        currentURL = curPageLinks.get(nb);
-        System.out.println(currentURL + " " + currentURL.getScore());
+                    // We enter this loop only if we already went to the page randomly selected
+                    while (linkHistory.contains(curPageLinks.get(nb).getHref())) {
+                        nb = (int) (Math.random() * curPageLinks.size());
+                    }
+                    break;
+                case "intelligent":
+                    Collections.sort(curPageLinks, Collections.reverseOrder());
+                    // Highest score in the list
+                    nb = 0;
+                    // We enter this loop only if we already went to the page randomly selected
+                    if (curPageLinks.size() > 1) { // Check if we have more than one link
+                        while (linkHistory.contains(curPageLinks.get(nb).getHref())) {
+                            ++nb; // We select the second highest, third, etc
+                            // If we find no suitable links at the end of the list, let’s go with the first one
+                            if (nb == curPageLinks.size()) {
+                                nb = 0;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    System.err.println("Bad value for DECISION_MODE config in config.properties");
+                    System.exit(0);
+            }
+            currentURL = curPageLinks.get(nb);
+            System.out.println(currentURL + " " + currentURL.getScore());
 
-        driver.get(currentURL.getHref());
+            driver.get(currentURL.getHref());
+        }
     }
 
     public static void computeLinkScore(Link link) {
@@ -78,16 +101,22 @@ public class Decision {
         while (st.hasMoreTokens()) {
             String token = st.nextToken().toLowerCase();
             if (Main.keywords.contains(token)) {
-                System.out.println("Keyword " + token + " found!");
+                if (Configuration.getBoolean("DEBUG")) {
+                    System.out.println("Keyword " + token + " found in " + link.getHref() + "!");
+                }
                 link.increaseScore(Configuration.getInt("SCORE_KEYWORD"));
             }
             if (Main.synonyms.contains(token)) {
-                System.out.println("Synonym " + token + " found");
+                if (Configuration.getBoolean("DEBUG")) {
+                    System.out.println("Synonym " + token + " found in " + link.getHref() + "!");
+                }
                 link.increaseScore(Configuration.getInt("SCORE_SYNONYM"));
             }
         }
 
-        //System.out.println("Score of " + link.getHref() + " = " + link.getScore());
+        if (Configuration.getBoolean("DEBUG")) {
+            System.out.println("Score of " + link.getHref() + " = " + link.getScore());
+        }
     }
 
     public void tearDown() throws Exception {
