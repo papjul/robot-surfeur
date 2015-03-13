@@ -69,16 +69,13 @@ public class Main {
             }
 
             keywords = new LinkedList<>();
-            synonyms = new LinkedList<>();
-
             for (int i = 2; i < args.length; ++i) {
                 keywords.add(args[i]);
             }
-            // TODO: Must be done before getting similars!
             Decision.filterKeywords(keywords);
 
+            synonyms = new LinkedList<>();
             Iterator<String> itr = keywords.iterator();
-
             while (itr.hasNext()) {
                 synonyms.add(Synonym.getMostSimilarFor(itr.next()));
             }
@@ -87,7 +84,6 @@ public class Main {
             for (int i = 0; i < Configuration.getInt("NB_CLICKS"); ++i) {
                 Decision.browse();
             }
-
         }
     }
 
